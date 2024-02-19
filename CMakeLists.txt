@@ -1,6 +1,6 @@
 
 cmake_minimum_required(VERSION 3.10)
-project(vector)
+project(c_data_structs)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 11)
@@ -17,10 +17,10 @@ include_directories(include /usr/include)
 file(GLOB SOURCES "src/*.c")
 
 # Generate executable
-add_executable(vector ${SOURCES})
+add_executable(tests ${SOURCES})
 
 # Link against readline library
-target_link_libraries(vector)
+#target_link_libraries(vector)
 
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

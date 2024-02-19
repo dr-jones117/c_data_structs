@@ -13,7 +13,7 @@ vector* create_vector() {
     }
 
     // Allocate memory for the items.
-    void** items = (void**)malloc(sizeof(void*) * START_SIZE);
+    void** items = (void**)malloc(sizeof(vector_item*) * START_SIZE);
     if(items == NULL){
         perror("create_vector");
         free(vec);
@@ -33,8 +33,9 @@ vector* create_vector() {
 void vector_free(vector* vec) {
     int size = vector_size(vec);
     for(int i = 0; i < size; i++) {
-        free(vec->items[i]);
+        vec->items[i]->f_func(vec->items[i]);
     }
+
 
     if (vec != NULL) {
         free(vec->items);
@@ -44,11 +45,12 @@ void vector_free(vector* vec) {
 
 
 // Modifiers 
-void push_back(vector* vec, void* item) {
+void push_back(vector* vec, void* item, void* free_func) {
     if (vector_size(vec) >= vec->capacity) {
         // Resize the items array if necessary
         size_t new_capacity = vec->capacity * 2; // Double the capacity
-        void** new_items = (void**)realloc(vec->items, sizeof(void*) * new_capacity);
+        vector_item** new_items = (vector_item**)realloc(vec->items, sizeof(vector_item*)
+                                                         * new_capacity);
         if (new_items == NULL) {
             perror("push_back: Failed to reallocate memory for items");
             return;
@@ -57,14 +59,24 @@ void push_back(vector* vec, void* item) {
         vec->capacity = new_capacity;
     }
 
-    // Add the item to the end of the vector
-    vec->items[vec->end_idx++] = item;
+    vector_item* new_item = (vector_item*)malloc(sizeof(vector_item));
+    if(new_item == NULL) {
+        perror("push_back: Could allocate vector item.");
+        exit(EXIT_FAILURE);
+    }
+
+    new_item->item = item;
+    new_item->f_func = free_func;
+
+    // Add the kitem to the end of the vector
+    vec->items[vec->end_idx++] = new_item;
 }
 
 
 void pop_back(vector* vec) {
     if(!vector_is_empty(vec)) {
-        free(vec->items[--vec->end_idx]);
+        vec->end_idx--;
+        vec->items[vec->end_idx]->f_func(vec->items[vec->end_idx]);
         vec->items[vec->end_idx] = NULL;
     }
     else {
@@ -94,15 +106,15 @@ size_t vector_capacity(vector *vec) {
 
 // Element Access
 void* vector_at(vector* vec, int idx) {
-    if(idx > vec->end_idx || idx <= -1) {
+    if(idx > vec->end_idx || idx <= -1 || vec->items[idx] == NULL) {
         perror("vector_at: out of bounds");
         return NULL;
     }
-    return vec->items[idx];
+    return vec->items[idx]->item;
 }
 
 
-void** vector_begin(vector* vec) {
+vector_item** vector_begin(vector* vec) {
     if(!vector_is_empty(vec)) {
         return vec->items;
     }
@@ -110,7 +122,7 @@ void** vector_begin(vector* vec) {
 }
 
 
-void** vector_end(vector* vec) {
+vector_item** vector_end(vector* vec) {
     if (!vector_is_empty(vec)) {
         return vec->items + (vector_size(vec) - 1);
     }

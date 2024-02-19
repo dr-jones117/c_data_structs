@@ -5,13 +5,20 @@
 #include<stdlib.h>
 #include<stdbool.h>
 
+
+typedef void (*free_func)(void*);
+typedef struct vector_item {
+    free_func f_func;
+    void* item;
+} vector_item;
+
 /* This vector object is generic. It holds a dynamic array
  * of pointers to objects. You can use mix any types, but
  * it's not recommended. */
 typedef struct vector {
     int capacity;
     int end_idx;
-    void** items;
+    vector_item** items;
 } vector;
 
 // Constructor
@@ -22,7 +29,7 @@ void vector_free(vector* vec);
 void vector_free_items(vector* vec);
 
 // Modifiers
-void push_back(vector* vec, void* item);
+void push_back(vector* vec, void* item, void* free_func);
 void pop_back(vector* vec);
 
 // Capacity
@@ -34,8 +41,8 @@ void vector_shrink_to_fit(vector* vec);
 
 // Element access
 void* vector_at(vector* vec, int idx);
-void** vector_begin(vector* vec);
-void** vector_end(vector* vec);
+vector_item** vector_begin(vector* vec);
+vector_item** vector_end(vector* vec);
 
 
 #endif 
