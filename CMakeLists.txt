@@ -11,10 +11,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "") # works
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Add include directories
-include_directories(include /usr/include)
+include_directories(include include/tests /usr/include)
 
 # Add source files
-file(GLOB SOURCES "src/*.c")
+file(GLOB SOURCES "src/*.c" "tests/*.c")
 
 # Generate executable
 add_executable(tests ${SOURCES})

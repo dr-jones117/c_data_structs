@@ -25,10 +25,13 @@ typedef struct vector {
 vector* create_vector();
 
 // Deconstructor
-void vector_free(vector* vec);
+void vector_free(void* vec);
 void vector_free_items(vector* vec);
 
 // Modifiers
+// You MUST give a pointer to a void function so that the object
+// knows how to free itself from memory. keep free_func as NULL if
+// the item wasn't allocated dynamically.
 void push_back(vector* vec, void* item, void* free_func);
 void pop_back(vector* vec);
 

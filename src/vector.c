@@ -13,7 +13,7 @@ vector* create_vector() {
     }
 
     // Allocate memory for the items.
-    void** items = (void**)malloc(sizeof(vector_item*) * START_SIZE);
+    vector_item** items = (vector_item**)malloc(sizeof(vector_item*) * START_SIZE);
     if(items == NULL){
         perror("create_vector");
         free(vec);
@@ -30,17 +30,24 @@ vector* create_vector() {
 
 
 // Deconstructor
-void vector_free(vector* vec) {
-    int size = vector_size(vec);
+void vector_free(void* vec) {
+    if (vec == NULL)
+        return; 
+
+    vector* v = (vector*)vec;
+    int size = vector_size(v);
+
     for(int i = 0; i < size; i++) {
-        vec->items[i]->f_func(vec->items[i]);
+        vector_item* item = v->items[i];
+        if (item != NULL && item->f_func != NULL) {
+            item->f_func(item->item); 
+        }
+        free(item); 
     }
 
-
-    if (vec != NULL) {
-        free(vec->items);
-        free(vec);
-    }
+    if (v->items != NULL)
+        free(v->items);
+    free(v); 
 }
 
 
@@ -76,7 +83,9 @@ void push_back(vector* vec, void* item, void* free_func) {
 void pop_back(vector* vec) {
     if(!vector_is_empty(vec)) {
         vec->end_idx--;
-        vec->items[vec->end_idx]->f_func(vec->items[vec->end_idx]);
+        if(vec->items[vec->end_idx]->f_func) {
+            vec->items[vec->end_idx]->f_func(vec->items[vec->end_idx]);
+        }
         vec->items[vec->end_idx] = NULL;
     }
     else {
