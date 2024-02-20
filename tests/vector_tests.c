@@ -4,15 +4,34 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
+#include <time.h>
+
 
 void int_free(void* int_ptr) {
     free((int*)int_ptr);
 }
 
+
+void double_free(void* double_ptr) {
+    free((double*)double_ptr);
+}
+
+
 int* allocate_int(int num) {
     int* ptr = (int*)malloc(sizeof(int));
     if(ptr == NULL) {
         perror("allocate_int: Couldn't allocate the integer");
+        exit(EXIT_FAILURE);
+    }
+    *ptr = num;
+    return ptr;
+}
+
+
+double* allocate_double(double num) {
+    double* ptr = (double*)malloc(sizeof(double));
+    if(ptr == NULL) {
+        perror("allocate_double: Couldn't allocate the double");
         exit(EXIT_FAILURE);
     }
     *ptr = num;
@@ -182,23 +201,32 @@ void run_str_vector_tests() {
     printf("All vector string tests passed!\n");
 }
 
+double randfrom(double min, double max) 
+{
+    double range = (max - min); 
+    double div = RAND_MAX / range;
+    return min + (rand() / div);
+}
 
 void run_2d_vector_tests() {
     vector* vec_2d = create_vector();
+    int y = 5;
+    int x = 3;
 
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < y; i++) {
         vector* inner_vec = create_vector();
-        for(int j = 0; j < 5; j++) {
-            push_back(inner_vec, allocate_int(142), &int_free);
+        for(int j = 0; j < x; j++) {
+            push_back(inner_vec, allocate_double(randfrom(0, 1000)), &double_free);
         }
         push_back(vec_2d, inner_vec, &vector_free);
     }
 
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < y; i++) {
         vector* inner_vec = vector_at(vec_2d, i);
-        for(int j = 0; j < 5; j++) {
-           printf("%d\n", *(int*)vector_at(inner_vec, j)); 
+        for(int j = 0; j < x; j++) {
+           printf("%1f ", *(double*)vector_at(inner_vec, j)); 
         }
+        printf("\n");
     }
 
     printf("\nDONE!\n");

@@ -81,16 +81,20 @@ void push_back(vector* vec, void* item, void* free_func) {
 
 
 void pop_back(vector* vec) {
-    if(!vector_is_empty(vec)) {
-        vec->end_idx--;
-        if(vec->items[vec->end_idx]->f_func) {
-            vec->items[vec->end_idx]->f_func(vec->items[vec->end_idx]);
-        }
-        vec->items[vec->end_idx] = NULL;
-    }
-    else {
+    if (vector_is_empty(vec)) {
         perror("pop_back: Vector is empty");
+        return;
     }
+
+    vec->end_idx--;
+
+    vector_item* item = vec->items[vec->end_idx];
+
+    if (item->f_func != NULL) {
+        item->f_func(item->item);
+    }
+
+    vec->items[vec->end_idx] = NULL;
 }
 
 
@@ -137,3 +141,13 @@ vector_item** vector_end(vector* vec) {
     }
     return NULL;
 }
+
+
+
+
+
+
+
+
+
+
