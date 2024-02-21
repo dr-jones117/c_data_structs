@@ -1,4 +1,5 @@
-#include "vector_tests.h"
+#include <vector_tests.h>
+#include <allocate.h>
 #include <string.h>
 #include <vector.h>
 #include <stdlib.h>
@@ -7,42 +8,10 @@
 #include <time.h>
 
 
-void int_free(void* int_ptr) {
-    free((int*)int_ptr);
-}
-
-
-void double_free(void* double_ptr) {
-    free((double*)double_ptr);
-}
-
-
-int* allocate_int(int num) {
-    int* ptr = (int*)malloc(sizeof(int));
-    if(ptr == NULL) {
-        perror("allocate_int: Couldn't allocate the integer");
-        exit(EXIT_FAILURE);
-    }
-    *ptr = num;
-    return ptr;
-}
-
-
-double* allocate_double(double num) {
-    double* ptr = (double*)malloc(sizeof(double));
-    if(ptr == NULL) {
-        perror("allocate_double: Couldn't allocate the double");
-        exit(EXIT_FAILURE);
-    }
-    *ptr = num;
-    return ptr;
-}
-
-
 void run_int_vector_tests() {
     vector* vec = create_vector();
     assert(vec != NULL);
-    assert(vector_capacity(vec) == START_SIZE);
+    assert(vector_capacity(vec) == VECTOR_START_SIZE);
     assert(vector_is_empty(vec) == true);
 
     push_back(vec, allocate_int(12), &int_free);
@@ -67,7 +36,7 @@ void run_int_vector_tests() {
     assert((int*)vector_at(vec, 4) == NULL);
     assert((int*)vector_at(vec, -1) == NULL);
 
-    assert(vector_capacity(vec) == START_SIZE);
+    assert(vector_capacity(vec) == VECTOR_START_SIZE);
 
     push_back(vec, allocate_int(213), &int_free);
     assert(*(int*)vector_at(vec, 4) == 213);
@@ -131,7 +100,7 @@ void run_int_vector_tests() {
 //running test when startsize is 16!!!
 void run_str_vector_tests() {
     vector* vec = create_vector();
-    assert(vector_capacity(vec) == START_SIZE);
+    assert(vector_capacity(vec) == VECTOR_START_SIZE);
 
     push_back(vec, "wow", NULL);
     push_back(vec, "cool", NULL);
@@ -176,7 +145,7 @@ void run_str_vector_tests() {
     push_back(vec, "cool", NULL);
 
     assert(vector_size(vec) == 33);
-    assert(vector_capacity(vec) == START_SIZE * 2);
+    assert(vector_capacity(vec) == VECTOR_START_SIZE * 4);
     assert(!vector_is_empty(vec));
 
     int size = vector_size(vec);
@@ -201,6 +170,7 @@ void run_str_vector_tests() {
     printf("All vector string tests passed!\n");
 }
 
+
 double randfrom(double min, double max) 
 {
     double range = (max - min); 
@@ -208,10 +178,12 @@ double randfrom(double min, double max)
     return min + (rand() / div);
 }
 
+
 void run_2d_vector_tests() {
     vector* vec_2d = create_vector();
     int y = 5;
     int x = 3;
+    srand(time(NULL));
 
     for(int i = 0; i < y; i++) {
         vector* inner_vec = create_vector();
@@ -230,7 +202,6 @@ void run_2d_vector_tests() {
     }
 
     printf("\nDONE!\n");
-
     vector_free(vec_2d);
 }
 

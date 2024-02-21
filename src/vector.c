@@ -13,7 +13,7 @@ vector* create_vector() {
     }
 
     // Allocate memory for the items.
-    vector_item** items = (vector_item**)malloc(sizeof(vector_item*) * START_SIZE);
+    vector_item** items = (vector_item**)malloc(sizeof(vector_item*) * VECTOR_START_SIZE);
     if(items == NULL){
         perror("create_vector");
         free(vec);
@@ -21,7 +21,7 @@ vector* create_vector() {
     }
 
     // Assign everything to the vector.
-    vec->capacity = START_SIZE;
+    vec->capacity = VECTOR_START_SIZE;
     vec->end_idx = 0;
     vec->items = items;
 
@@ -114,6 +114,16 @@ bool vector_is_empty(vector *vec) {
 
 size_t vector_capacity(vector *vec) {
     return vec->capacity;
+}
+
+
+void vector_shrink_to_fit(vector* vec) {
+    if(vec == NULL)
+        return;
+
+    int size = vector_size(vec);
+
+
 }
 
 

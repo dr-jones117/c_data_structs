@@ -1,6 +1,6 @@
 #ifndef __VECTOR_H_
 #define __VECTOR_H_
-#define START_SIZE 32
+#define VECTOR_START_SIZE 16
 
 #include<stdlib.h>
 #include<stdbool.h>
@@ -26,7 +26,6 @@ vector* create_vector();
 
 // Deconstructor
 void vector_free(void* vec);
-void vector_free_items(vector* vec);
 
 // Modifiers
 // You MUST give a pointer to a void function so that the object
