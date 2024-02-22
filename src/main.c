@@ -1,8 +1,5 @@
-#include <sys/types.h>
 #include <vector_tests.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
 
 int main(int argc, char** argv) {
     run_int_vector_tests();
