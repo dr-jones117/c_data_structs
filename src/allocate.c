@@ -3,12 +3,12 @@
 #include <stdio.h>
 
 void int_free(void* int_ptr) {
-    free((int*)int_ptr);
+    free(int_ptr);
 }
 
 
 void double_free(void* double_ptr) {
-    free((double*)double_ptr);
+    free(double_ptr);
 }
 
 

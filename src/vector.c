@@ -94,7 +94,7 @@ void pop_back(vector* vec) {
         item->f_func(item->item);
     }
 
-    vec->items[vec->end_idx] = NULL;
+    free(item);
 }
 
 
@@ -117,19 +117,51 @@ size_t vector_capacity(vector *vec) {
 }
 
 
+void vector_reserve(vector* vec, size_t size) {
+    if(vec == NULL) 
+        return;
+
+    int vec_size = vector_size(vec);
+    if(size <= 0 || size <= vec_size) {
+        perror("vector_reserve: Invalid size");
+        return;
+    }
+
+    vector_item** items = (vector_item**)realloc(vec->items, size * sizeof(vector_item*));
+    if(items == NULL) {
+        perror("vector_reserve: Couldn't allocate array");
+        exit(EXIT_FAILURE);
+    }
+
+    vec->capacity = size;
+    vec->items = items;
+}
+
+
 void vector_shrink_to_fit(vector* vec) {
     if(vec == NULL)
         return;
 
     int size = vector_size(vec);
+    if(size <= 0) {
+        perror("vector_shrink_to_fit: invalid shrink size");
+        return;
+    }
 
+    vector_item** fitted = (vector_item**)realloc(vec->items, size * sizeof(vector_item*));
+    if(fitted == NULL) {
+        perror("vector_shrink_to_fit: Couldn't allocate memory for array");
+        exit(EXIT_FAILURE);
+    }
 
+    vec->capacity = size;
+    vec->items = fitted;
 }
 
 
 // Element Access
 void* vector_at(vector* vec, int idx) {
-    if(idx > vec->end_idx || idx <= -1 || vec->items[idx] == NULL) {
+    if(vector_is_empty(vec) || idx >= vec->end_idx || idx <= -1) {
         perror("vector_at: out of bounds");
         return NULL;
     }

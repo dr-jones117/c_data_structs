@@ -15,7 +15,6 @@ void run_int_vector_tests() {
     assert(vector_is_empty(vec) == true);
 
     push_back(vec, allocate_int(12), &int_free);
-
     assert(vector_is_empty(vec) == false);
     assert(vector_size(vec) == 1);
     assert(*(int*)vector_at(vec, 0) == 12);
@@ -57,10 +56,10 @@ void run_int_vector_tests() {
     // Example using for loop
     int size = vector_size(vec);
     for(int i = 0; i < size; i++) {
-        printf("%d\n", *(int*)vector_at(vec, i));
+        //printf("%d\n", *(int*)vector_at(vec, i));
     }
 
-    printf("\n\n");
+    //printf("\n\n");
 
     /*
     // Example using while loop
@@ -94,7 +93,6 @@ void run_int_vector_tests() {
     vector_free(vec); 
     printf("All integer vector tests passed!\n");
 }
-
 
 
 //running test when startsize is 16!!!
@@ -150,7 +148,7 @@ void run_str_vector_tests() {
 
     int size = vector_size(vec);
     for(int i = 0; i < size; i++) {
-        printf("%s\n", (char*)vector_at(vec, i));
+        //printf("%s\n", (char*)vector_at(vec, i));
     }
     
     assert(strcmp((char*)vector_at(vec, 0), "wow") == 0);
@@ -167,7 +165,7 @@ void run_str_vector_tests() {
 
     //write a function to free only vector items so that you can run this correctly
     vector_free(vec);
-    printf("All vector string tests passed!\n");
+    //printf("All vector string tests passed!\n");
 }
 
 
@@ -196,14 +194,87 @@ void run_2d_vector_tests() {
     for(int i = 0; i < y; i++) {
         vector* inner_vec = vector_at(vec_2d, i);
         for(int j = 0; j < x; j++) {
-           printf("%1f ", *(double*)vector_at(inner_vec, j)); 
+           //printf("%1f ", *(double*)vector_at(inner_vec, j)); 
         }
-        printf("\n");
+        //printf("\n");
     }
 
-    printf("\nDONE!\n");
     vector_free(vec_2d);
 }
+
+
+void run_fit_vector_tests() {
+    vector* vec = create_vector();
+
+    for(int i = 0; i < 65; i++) {
+        push_back(vec, allocate_int(24), int_free);
+    }
+    assert(vector_size(vec) == 65);
+    assert(vector_capacity(vec) == 128);
+    vector_shrink_to_fit(vec);
+
+    assert(vector_size(vec) == 65);
+    assert(vector_capacity(vec) == 65);
+    push_back(vec, allocate_double(23.4), double_free);
+    assert(*(double*)vector_at(vec, 65) == 23.4);
+    //printf("%d\n", vector_capacity(vec));
+    assert(vector_capacity(vec) == 130);
+
+    vector_free(vec);
+
+    vector* vec2 = create_vector();
+
+    assert(vector_capacity(vec2) == VECTOR_START_SIZE);
+    vector_shrink_to_fit(vec2);
+    assert(vector_capacity(vec2) == VECTOR_START_SIZE);
+
+    assert(vector_size(vec2) == 0);
+    assert(vector_is_empty(vec2));
+
+    pop_back(vec2);
+    pop_back(vec2);
+    assert(vector_size(vec2) == 0);
+
+    vector_free(vec2);
+}
+
+
+void run_vector_reserve_tests() {
+    vector* vec = create_vector();
+
+    assert(vector_capacity(vec) == VECTOR_START_SIZE);
+
+    vector_reserve(vec, 256);
+
+    assert(vector_capacity(vec) == 256);
+    assert(vector_size(vec) == 0);
+
+    for(int i = 0; i < 256; i++) {
+        push_back(vec, "cool", NULL);
+    }
+
+    assert(vector_capacity(vec) == 256);
+    assert(vector_size(vec) == 256);
+    assert(strcmp((char*)vector_at(vec, 255), "cool") == 0);
+
+    assert(vector_capacity(vec) == 256);
+    assert(vector_size(vec) == 256);
+
+    vector_reserve(vec, 0);
+    assert(vector_capacity(vec) == 256);
+    assert(vector_size(vec) == 256);
+
+    vector_reserve(vec, 256);
+    assert(vector_capacity(vec) == 256);
+    assert(vector_size(vec) == 256);
+
+    vector_reserve(vec, 257);
+    assert(vector_capacity(vec) == 257);
+    assert(vector_size(vec) == 256);
+
+    vector_free(vec);
+}
+
 
 
 
